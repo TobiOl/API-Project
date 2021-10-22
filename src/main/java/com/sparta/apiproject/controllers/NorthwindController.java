@@ -1,5 +1,7 @@
 package com.sparta.apiproject.controllers;
 
+import com.sparta.apiproject.dtos.CustomersDTO;
+import com.sparta.apiproject.dtos.ProductsDTO;
 import com.sparta.apiproject.entities.*;
 import com.sparta.apiproject.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,49 +15,52 @@ import java.util.Optional;
 @RestController
 public class NorthwindController {
 
-    private final CustomerEntityRespository customerEntityRespository;
     private final ProductsRepository productsRepository;
     private final SuppliersRepository suppliersRepository;
     private final ShipperRepository shipperRepository;
     private final OrderRepository orderRepository;
     private final CategoryRespository categoryRespository;
+    private final MapService mapService;
 
     @Autowired
-    public NorthwindController(CustomerEntityRespository customerEntityRespository,
-                               ProductsRepository productsRepository
-    ,SuppliersRepository suppliersRepository
-    ,OrderRepository orderRepository
-    ,ShipperRepository shipperRepository
-    ,CategoryRespository categoryRespository){
-        this.customerEntityRespository = customerEntityRespository;
+    public NorthwindController(ProductsRepository productsRepository
+                            ,SuppliersRepository suppliersRepository
+                            ,OrderRepository orderRepository
+                            ,ShipperRepository shipperRepository
+                            ,CategoryRespository categoryRespository
+                            ,MapService mapService){
         this.productsRepository = productsRepository;
         this.suppliersRepository = suppliersRepository;
         this.orderRepository = orderRepository;
         this.shipperRepository = shipperRepository;
         this.categoryRespository = categoryRespository;
+        this.mapService = mapService;
     }
 
     @GetMapping("/customers")
     @ResponseBody
-    public List<CustomersEntity> getAllCustomers(@RequestParam(required = false) String name){
-        if (name == null){
-            return customerEntityRespository.findAll();
+    public List<CustomersDTO> getAllCustomers(@RequestParam(required = false) String name){
+        List<CustomersDTO> allCustomers = mapService.getAllCustomers();
+        if (name==null){
+            return allCustomers;
         }
-       List<CustomersEntity> foundCustomers = new ArrayList<>();
-        for (CustomersEntity c:
-             customerEntityRespository.findAll()) {
-            if (c.getContactName().contains(name)){
-                foundCustomers.add(c);
+        List<CustomersDTO> foundCustomers = new ArrayList<>();
+        for (CustomersDTO customersDTO:
+             allCustomers) {
+            if (customersDTO.getContactName().contains(name)){
+                foundCustomers.add(customersDTO);
             }
         }
         return foundCustomers;
     }
+
     // TODO: Add finding product by stock greater than x (DONE)
     // TODO: Add finding product by unit price greater than x (DONE)
     // TODO: Add finding product by discontinued
     @GetMapping("/products")
-    public List<ProductsEntity> getAllProducts(){
-        return productsRepository.findAll();
+    @ResponseBody
+    public List<ProductsDTO> getAllProducts(){
+        return mapService.getAllProducts();
     }
 
     @GetMapping("/products/{id}")
