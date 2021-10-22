@@ -7,7 +7,7 @@ import javax.persistence.*;
         @Index(name = "PostalCode", columnList = "PostalCode")
 })
 @Entity
-public class SuppliersEntity {
+public class SupplierEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SupplierID", nullable = false)
