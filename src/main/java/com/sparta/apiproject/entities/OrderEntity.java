@@ -3,12 +3,11 @@ package com.sparta.apiproject.entities;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Table(name = "orders", indexes = {
         @Index(name = "ShippedDate", columnList = "ShippedDate"),
-        @Index(name = "CustomerID", columnList = "CustomerID"),
         @Index(name = "ShipPostalCode", columnList = "ShipPostalCode"),
-        @Index(name = "EmployeeID", columnList = "EmployeeID"),
         @Index(name = "OrderDate", columnList = "OrderDate")
 })
 @Entity
@@ -18,25 +17,28 @@ public class OrderEntity {
     @Column(name = "OrderID", nullable = false)
     private Integer id;
 
-    @Column(name = "CustomerID", length = 5)
-    private String customerID;
+    @ManyToOne
+    @JoinColumn(name = "CustomerID")
+    private CustomersEntity customerID;
 
-    @Column(name = "EmployeeID")
-    private Integer employeeID;
+    @ManyToOne
+    @JoinColumn(name = "EmployeeID")
+    private EmployeeEntity employeeID;
 
     @Column(name = "OrderDate")
-    private Instant orderDate;
+    private LocalDateTime orderDate;
 
     @Column(name = "RequiredDate")
-    private Instant requiredDate;
+    private LocalDateTime requiredDate;
 
     @Column(name = "ShippedDate")
     private Instant shippedDate;
 
-    @Column(name = "ShipVia")
-    private Integer shipVia;
+    @ManyToOne
+    @JoinColumn(name = "ShipVia")
+    private ShipperEntity shipVia;
 
-    @Column(name = "Freight", precision = 19, scale = 4)
+    @Column(name = "Freight", precision = 10, scale = 4)
     private BigDecimal freight;
 
     @Column(name = "ShipName", length = 40)
@@ -113,11 +115,11 @@ public class OrderEntity {
         this.freight = freight;
     }
 
-    public Integer getShipVia() {
+    public ShipperEntity getShipVia() {
         return shipVia;
     }
 
-    public void setShipVia(Integer shipVia) {
+    public void setShipVia(ShipperEntity shipVia) {
         this.shipVia = shipVia;
     }
 
@@ -129,35 +131,35 @@ public class OrderEntity {
         this.shippedDate = shippedDate;
     }
 
-    public Instant getRequiredDate() {
+    public LocalDateTime getRequiredDate() {
         return requiredDate;
     }
 
-    public void setRequiredDate(Instant requiredDate) {
+    public void setRequiredDate(LocalDateTime requiredDate) {
         this.requiredDate = requiredDate;
     }
 
-    public Instant getOrderDate() {
+    public LocalDateTime getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(Instant orderDate) {
+    public void setOrderDate(LocalDateTime orderDate) {
         this.orderDate = orderDate;
     }
 
-    public Integer getEmployeeID() {
+    public EmployeeEntity getEmployeeID() {
         return employeeID;
     }
 
-    public void setEmployeeID(Integer employeeID) {
+    public void setEmployeeID(EmployeeEntity employeeID) {
         this.employeeID = employeeID;
     }
 
-    public String getCustomerID() {
+    public CustomersEntity getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(String customerID) {
+    public void setCustomerID(CustomersEntity customerID) {
         this.customerID = customerID;
     }
 

@@ -1,11 +1,7 @@
 package com.sparta.apiproject.controllers;
 
-import com.sparta.apiproject.entities.CustomersEntity;
-import com.sparta.apiproject.entities.ProductsEntity;
-import com.sparta.apiproject.entities.SuppliersEntity;
-import com.sparta.apiproject.repositories.CustomerEntityRespository;
-import com.sparta.apiproject.repositories.ProductsRepository;
-import com.sparta.apiproject.repositories.SuppliersRepository;
+import com.sparta.apiproject.entities.*;
+import com.sparta.apiproject.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +16,23 @@ public class NorthwindController {
     private final CustomerEntityRespository customerEntityRespository;
     private final ProductsRepository productsRepository;
     private final SuppliersRepository suppliersRepository;
+    private final ShipperRepository shipperRepository;
+    private final OrderRepository orderRepository;
+    private final CategoryRespository categoryRespository;
 
     @Autowired
     public NorthwindController(CustomerEntityRespository customerEntityRespository,
                                ProductsRepository productsRepository
-    ,SuppliersRepository suppliersRepository){
+    ,SuppliersRepository suppliersRepository
+    ,OrderRepository orderRepository
+    ,ShipperRepository shipperRepository
+    ,CategoryRespository categoryRespository){
         this.customerEntityRespository = customerEntityRespository;
         this.productsRepository = productsRepository;
         this.suppliersRepository = suppliersRepository;
+        this.orderRepository = orderRepository;
+        this.shipperRepository = shipperRepository;
+        this.categoryRespository = categoryRespository;
     }
 
     @GetMapping("/customers")
@@ -78,14 +83,9 @@ public class NorthwindController {
     public List<ProductsEntity> getProductsPriceWithinBound(@RequestParam float lowerBoundPrice){
         List<ProductsEntity> foundProducts = new ArrayList<>();
         for (ProductsEntity p: productsRepository.findAll()){
-            //this code makes puppies cry, find better way
             int result = p.getUnitPrice().compareTo(BigDecimal.valueOf(lowerBoundPrice));
-            switch (result){
-                case 1:
-                    foundProducts.add(p);
-                    break;
-                default:
-                    break;
+            if (result >= 1) {
+                foundProducts.add(p);
             }
         }
         if (foundProducts.size() == 0){
@@ -95,11 +95,25 @@ public class NorthwindController {
     }
     // TODO: Add finding supplier by ID and phone, grouping by country, city and region
     @GetMapping("/suppliers")
-    public List<SuppliersEntity> getAllSuppliers(){
+    public List<SupplierEntity> getAllSuppliers(){
         return suppliersRepository.findAll();
     }
 
-    // TODO: Add rest of entitys and repos
 
+    // TODO: Add rest of entitys and repos
+    @GetMapping("/shippers")
+    public List<ShipperEntity> getAllShippers(){
+        return shipperRepository.findAll();
+    }
+
+    @GetMapping("/orders")
+    public List<OrderEntity> getAllOrders(){
+        return orderRepository.findAll();
+    }
+
+    @GetMapping("/category")
+    public List<CategoryEntity> getAllCategories(){
+        return categoryRespository.findAll();
+    }
 
 }
